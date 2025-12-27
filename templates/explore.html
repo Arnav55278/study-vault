@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Public Folders{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">
+        <i class="bi bi-compass me-2"></i>Explore Public Folders
+    </h2>
+    
+    {% if folders.items %}
+    <div class="row g-4">
+        {% for folder in folders.items %}
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="card h-100 border-0 shadow-sm folder-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-folder-fill text-warning fs-2 me-2"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 text-truncate">{{ folder.name }}</h6>
+                            <small class="text-muted d-block">by {{ folder.owner.username }}</small>
+                            <small class="text-muted">
+                                <i class="bi bi-file-earmark me-1"></i>{{ folder.files.count() }} files
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="stretched-link"></a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if folders.pages > 1 %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if folders.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('explore', page=folders.prev_num) }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for page in folders.iter_pages() %}
+                {% if page %}
+                <li class="page-item {{ 'active' if page == folders.page else '' }}">
+                    <a class="page-link" href="{{ url_for('explore', page=page) }}">{{ page }}</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if folders.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('explore', page=folders.next_num) }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-folder-x display-1 text-muted"></i>
+        <p class="text-muted mt-3">No public folders available yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

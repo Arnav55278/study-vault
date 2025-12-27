@@ -1,0 +1,186 @@
+/* static/css/style.css */
+
+/* General Styles */
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    color: white;
+    padding: 60px 20px;
+}
+
+.hero-section h1,
+.hero-section p {
+    color: white;
+}
+
+.hero-section .btn-primary {
+    background-color: white;
+    color: #667eea;
+    border: none;
+}
+
+.hero-section .btn-primary:hover {
+    background-color: #f0f0f0;
+}
+
+.hero-section .btn-outline-primary {
+    color: white;
+    border-color: white;
+}
+
+.hero-section .btn-outline-primary:hover {
+    background-color: white;
+    color: #667eea;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.folder-card:hover,
+.file-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Upload Area */
+.upload-area {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.upload-area:hover {
+    background-color: #e9ecef;
+    border-color: #0d6efd !important;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+/* Folder Tree */
+#folder-tree {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.jstree-default .jstree-anchor {
+    padding: 5px 10px;
+}
+
+/* Tables */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: #f8f9fa;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* File Icons */
+.bi-file-earmark-pdf { color: #dc3545; }
+.bi-file-earmark-image { color: #28a745; }
+.bi-file-earmark-music { color: #ffc107; }
+.bi-file-earmark-play { color: #007bff; }
+
+/* Star Button */
+.star-btn {
+    transition: all 0.2s ease;
+}
+
+.star-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 15px;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: white !important;
+}
+
+/* Loading Spinner */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Text Truncate */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

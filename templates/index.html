@@ -1,0 +1,131 @@
+<!-- templates/index.html -->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section text-center py-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold text-primary mb-3">
+                    <i class="bi bi-book-half me-2"></i>StudyVault
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Your ultimate platform to share and discover study materials. 
+                    Upload PDFs, images, audio notes, and short videos!
+                </p>
+                
+                {% if not current_user.is_authenticated %}
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Get Started Free
+                        </a>
+                        <a href="{{ url_for('explore') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-compass me-2"></i>Explore
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('upload_files') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload Files
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section mb-5">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <i class="bi bi-file-earmark-pdf display-4 text-danger"></i>
+                    <h6 class="mt-2">PDFs</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <i class="bi bi-image display-4 text-success"></i>
+                    <h6 class="mt-2">Images</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <i class="bi bi-music-note-beamed display-4 text-warning"></i>
+                    <h6 class="mt-2">Audio</h6>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card h-100 border-0 shadow-sm text-center p-3">
+                    <i class="bi bi-play-circle display-4 text-primary"></i>
+                    <h6 class="mt-2">Videos</h6>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Folders -->
+    {% if popular_folders %}
+    <section class="popular-folders mb-5">
+        <h3 class="mb-4">
+            <i class="bi bi-star-fill text-warning me-2"></i>Popular Folders
+        </h3>
+        <div class="row g-4">
+            {% for folder in popular_folders %}
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="card h-100 border-0 shadow-sm folder-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-folder-fill text-warning fs-3 me-2"></i>
+                            <div>
+                                <h6 class="mb-0 text-truncate">{{ folder.name }}</h6>
+                                <small class="text-muted">by {{ folder.owner.username }}</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-light text-dark">
+                                <i class="bi bi-file-earmark me-1"></i>{{ folder.files.count() }} files
+                            </span>
+                            <span class="text-warning">
+                                <i class="bi bi-star-fill"></i> {{ folder.get_star_count() }}
+                            </span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="stretched-link"></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Recent Uploads -->
+    {% if recent_files %}
+    <section class="recent-uploads mb-5">
+        <h3 class="mb-4">
+            <i class="bi bi-clock-history text-primary me-2"></i>Recent Uploads
+        </h3>
+        <div class="row g-3">
+            {% for file in recent_files %}
+            <div class="col-lg-2 col-md-3 col-4">
+                <div class="card h-100 border-0 shadow-sm file-card">
+                    <div class="card-body text-center p-2">
+                        <i class="{{ file.get_icon() }} fs-1"></i>
+                        <p class="small mb-1 text-truncate" title="{{ file.filename }}">{{ file.filename }}</p>
+                        <small class="text-muted">{{ file.get_size_formatted() }}</small>
+                    </div>
+                    <a href="{{ url_for('folder_view', folder_id=file.folder_id) }}" class="stretched-link"></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

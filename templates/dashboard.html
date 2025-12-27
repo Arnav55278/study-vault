@@ -1,0 +1,145 @@
+<!-- templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Sidebar with Folder Tree -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-folder-fill me-2"></i>My Folders</span>
+                    <a href="{{ url_for('create_folder') }}" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus"></i>
+                    </a>
+                </div>
+                <div class="card-body p-2">
+                    <div id="folder-tree"></div>
+                    
+                    {% if not my_folders %}
+                        <p class="text-muted text-center py-3">
+                            No folders yet. <a href="{{ url_for('create_folder') }}">Create one!</a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="card shadow-sm border-0 mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">Quick Stats</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-folder me-2"></i>Folders</span>
+                        <span class="badge bg-primary">{{ total_folders }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="bi bi-file-earmark me-2"></i>Files</span>
+                        <span class="badge bg-success">{{ total_files }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 mb-4">
+                <a href="{{ url_for('upload_files') }}" class="btn btn-primary">
+                    <i class="bi bi-cloud-upload me-2"></i>Upload Files
+                </a>
+                <a href="{{ url_for('create_folder') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-folder-plus me-2"></i>New Folder
+                </a>
+            </div>
+            
+            <!-- Recent Uploads -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <i class="bi bi-clock-history me-2"></i>Recent Uploads
+                </div>
+                <div class="card-body">
+                    {% if recent_uploads %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Folder</th>
+                                        <th>Size</th>
+                                        <th>Uploaded</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in recent_uploads %}
+                                    <tr>
+                                        <td>
+                                            <i class="{{ file.get_icon() }} me-2"></i>
+                                            <span class="text-truncate" style="max-width: 200px; display: inline-block;">
+                                                {{ file.filename }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('folder_view', folder_id=file.folder_id) }}">
+                                                {{ file.folder.name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ file.get_size_formatted() }}</td>
+                                        <td>{{ format_datetime(file.uploaded_at) }}</td>
+                                        <td>
+                                            <a href="{{ url_for('download_file', file_id=file.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" title="Download">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-cloud-upload display-1 text-muted"></i>
+                            <p class="text-muted mt-3">No uploads yet. Start by uploading some files!</p>
+                            <a href="{{ url_for('upload_files') }}" class="btn btn-primary">
+                                Upload Now
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Initialize jsTree
+    $.getJSON('/api/folder-tree', function(data) {
+        $('#folder-tree').jstree({
+            'core': {
+                'data': data,
+                'themes': {
+                    'responsive': true
+                }
+            },
+            'plugins': ['types'],
+            'types': {
+                'default': {
+                    'icon': 'bi bi-folder text-warning'
+                }
+            }
+        });
+        
+        // Handle folder click
+        $('#folder-tree').on('select_node.jstree', function(e, data) {
+            window.location.href = '/folder/' + data.node.id;
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
