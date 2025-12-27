@@ -1,44 +1,82 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit Folder{% endblock %}
+{% block title %}Edit {{ folder.name }} - StudyVault{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('folder_view', folder_id=folder.id) }}">{{ folder.name }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
                     <h4 class="mb-0">
-                        <i class="bi bi-pencil me-2"></i>Edit: {{ folder.name }}
+                        <i class="bi bi-folder-fill text-warning me-2"></i>Edit Folder
                     </h4>
                 </div>
                 <div class="card-body p-4">
                     <form method="POST">
                         {{ form.hidden_tag() }}
                         
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Folder Name</label>
-                            {{ form.name(class="form-control form-control-lg") }}
+                        <!-- Folder Name -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-folder me-1"></i>Folder Name <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name(class="form-control form-control-lg", placeholder="Enter folder name") }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.name.errors[0] }}</div>
+                            {% endif %}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Description</label>
-                            {{ form.description(class="form-control", rows=3) }}
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-card-text me-1"></i>Description
+                            </label>
+                            {{ form.description(class="form-control", rows=3, placeholder="What's in this folder?") }}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Parent Folder</label>
-                            {{ form.parent_id(class="form-select") }}
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-bookmark me-1"></i>Category
+                            </label>
+                            {{ form.category_id(class="form-select") }}
                         </div>
-                        
-                        <div class="mb-4 form-check">
-                            {{ form.is_public(class="form-check-input") }}
-                            <label class="form-check-label">Make public</label>
+
+                        <!-- Visibility -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block">
+                                <i class="bi bi-eye me-1"></i>Visibility
+                            </label>
+                            <div class="form-check form-switch">
+                                {{ form.is_public(class="form-check-input") }}
+                                <label class="form-check-label">Make this folder public</label>
+                            </div>
+                            <small class="text-muted">Public folders appear in explore and can be found by anyone</small>
                         </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-lg me-2"></i>Save Changes
+
+                        <!-- Password Protection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-lock me-1"></i>Password Protection (Optional)
+                            </label>
+                            {{ form.password(class="form-control", placeholder="Leave empty to remove password") }}
+                            <small class="text-muted">Add a password to restrict access</small>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 pt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Save Changes
                             </button>
                             <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="btn btn-outline-secondary">
                                 Cancel
@@ -47,7 +85,63 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Share Settings -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-share me-2"></i>Share Settings</h5>
+                </div>
+                <div class="card-body">
+                    {% if folder.share_token %}
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" 
+                                   value="{{ url_for('shared_folder', token=folder.share_token, _external=True) }}" 
+                                   id="shareLink" readonly>
+                            <button class="btn btn-outline-primary" onclick="copyShareLink()">
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
+                        </div>
+                        <form action="{{ url_for('regenerate_share_token', folder_id=folder.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-arrow-repeat me-1"></i>Regenerate Link
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-muted mb-3">Generate a shareable link for this folder</p>
+                        <form action="{{ url_for('generate_share_token', folder_id=folder.id) }}" method="POST">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-link-45deg me-1"></i>Generate Share Link
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Deleting this folder will also delete all files inside it. This cannot be undone.</p>
+                    <form action="{{ url_for('delete_folder', folder_id=folder.id) }}" method="POST" 
+                          onsubmit="return confirm('DELETE this folder and ALL files inside? This cannot be undone!')">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-1"></i>Delete Folder
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function copyShareLink() {
+    var input = document.getElementById('shareLink');
+    input.select();
+    document.execCommand('copy');
+    alert('Link copied to clipboard!');
+}
+</script>
 {% endblock %}

@@ -1,17 +1,11 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
-    "python.analysis.extraPaths": [
-        "${workspaceFolder}/venv/Lib/site-packages"
-    ],
-    "python.autoComplete.extraPaths": [
-        "${workspaceFolder}/venv/Lib/site-packages"
-    ]
-}
-{
     "files.associations": {
         "*.html": "jinja-html"
     },
     "emmet.includeLanguages": {
         "jinja-html": "html"
-    }
+    },
+    "html.validate.scripts": false,
+    "html.validate.styles": false,
+    "css.validate": false
 }

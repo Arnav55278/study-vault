@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ folder.name }} - Shared Folder{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Shared Badge -->
+    <div class="text-center mb-4">
+        <span class="badge bg-info fs-6 px-3 py-2">
+            <i class="bi bi-share me-1"></i>Shared Folder
+        </span>
+    </div>
+
+    <!-- Folder Info -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-folder-fill text-warning" style="font-size: 4rem;"></i>
+                <div class="ms-4">
+                    <h2 class="mb-1">{{ folder.name }}</h2>
+                    {% if folder.description %}
+                        <p class="text-muted mb-2">{{ folder.description }}</p>
+                    {% endif %}
+                    <small class="text-muted">
+                        Shared by <strong>{{ folder.owner.username }}</strong>
+                        • {{ folder.get_total_files() }} files
+                        • {{ folder.view_count }} views
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Files -->
+    <h4 class="mb-3"><i class="bi bi-file-earmark me-2"></i>Files</h4>
+    
+    {% if files %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>File</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td>
+                            <i class="{{ file.get_icon() }} me-2"></i>
+                            {{ file.filename }}
+                        </td>
+                        <td>{{ file.get_size_formatted() }}</td>
+                        <td><span class="badge bg-secondary">{{ file.file_type }}</span></td>
+                        <td>
+                            <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-sm btn-success">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-folder2-open" style="font-size: 4rem;"></i>
+            <p class="mt-3">This folder is empty</p>
+        </div>
+    {% endif %}
+
+    <!-- WhatsApp Share -->
+    <div class="text-center mt-5">
+        <p class="text-muted">Share this folder</p>
+        <a href="https://wa.me/?text={{ url_for('shared_folder', token=folder.share_token, _external=True) }}" 
+           class="btn btn-success" target="_blank">
+            <i class="bi bi-whatsapp me-2"></i>Share on WhatsApp
+        </a>
+    </div>
+</div>
+{% endblock %}

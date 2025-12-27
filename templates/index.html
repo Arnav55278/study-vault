@@ -1,131 +1,774 @@
-<!-- templates/index.html -->
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}StudyVault - Share & Discover Study Materials | Free Notes, PDFs & Resources{% endblock %}
+
+{% block meta_description %}Join StudyVault to share and discover free study materials, notes, PDFs, and educational resources. Perfect for CBSE, ICSE, JEE, NEET preparation.{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Hero Section -->
-    <section class="hero-section text-center py-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold text-primary mb-3">
-                    <i class="bi bi-book-half me-2"></i>StudyVault
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-gradient"></div>
+        <div class="hero-pattern"></div>
+        <div class="hero-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+    
+    <div class="container hero-container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 hero-content" data-aos="fade-right">
+                <div class="hero-badge mb-3">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <span>Free for Students</span>
+                </div>
+                
+                <h1 class="hero-title">
+                    Share & Discover
+                    <span class="text-gradient">Study Materials</span>
                 </h1>
-                <p class="lead text-muted mb-4">
-                    Your ultimate platform to share and discover study materials. 
-                    Upload PDFs, images, audio notes, and short videos!
+                
+                <p class="hero-subtitle">
+                    Join thousands of students sharing notes, PDFs, and resources. 
+                    Learn together, grow together.
                 </p>
                 
-                {% if not current_user.is_authenticated %}
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-person-plus me-2"></i>Get Started Free
-                        </a>
-                        <a href="{{ url_for('explore') }}" class="btn btn-outline-primary btn-lg">
-                            <i class="bi bi-compass me-2"></i>Explore
-                        </a>
+                <!-- Hero Search -->
+                <form action="{{ url_for('search') }}" method="GET" class="hero-search-form">
+                    <div class="hero-search-wrapper">
+                        <i class="bi bi-search"></i>
+                        <input type="search" name="q" placeholder="Search notes, PDFs, videos..." class="hero-search-input">
+                        <button type="submit" class="hero-search-btn">
+                            Search
+                            <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
                     </div>
-                {% else %}
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ url_for('upload_files') }}" class="btn btn-primary btn-lg">
+                    <div class="search-suggestions-hero">
+                        <span>Popular:</span>
+                        <a href="{{ url_for('search') }}?q=physics notes">Physics Notes</a>
+                        <a href="{{ url_for('search') }}?q=maths formulas">Maths Formulas</a>
+                        <a href="{{ url_for('search') }}?q=chemistry">Chemistry</a>
+                    </div>
+                </form>
+                
+                <!-- Hero CTAs -->
+                <div class="hero-ctas">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('upload_files') }}" class="btn btn-hero-primary">
                             <i class="bi bi-cloud-upload me-2"></i>Upload Files
                         </a>
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-lg">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-hero-secondary">
+                            <i class="bi bi-grid-1x2 me-2"></i>Dashboard
                         </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-hero-primary">
+                            <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                        </a>
+                        <a href="{{ url_for('explore') }}" class="btn btn-hero-secondary">
+                            <i class="bi bi-compass me-2"></i>Explore First
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Social Proof -->
+                <div class="hero-social-proof">
+                    <div class="avatars-stack">
+                        <img src="https://ui-avatars.com/api/?name=A&background=667eea&color=fff" alt="">
+                        <img src="https://ui-avatars.com/api/?name=B&background=764ba2&color=fff" alt="">
+                        <img src="https://ui-avatars.com/api/?name=C&background=48bb78&color=fff" alt="">
+                        <img src="https://ui-avatars.com/api/?name=D&background=ed8936&color=fff" alt="">
+                        <span class="avatar-count">+{{ stats.total_users }}</span>
                     </div>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section mb-5">
-        <div class="row g-4">
-            <div class="col-md-3 col-6">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <i class="bi bi-file-earmark-pdf display-4 text-danger"></i>
-                    <h6 class="mt-2">PDFs</h6>
+                    <p>Joined by <strong>{{ stats.total_users }}+ students</strong> this month</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <i class="bi bi-image display-4 text-success"></i>
-                    <h6 class="mt-2">Images</h6>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <i class="bi bi-music-note-beamed display-4 text-warning"></i>
-                    <h6 class="mt-2">Audio</h6>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card h-100 border-0 shadow-sm text-center p-3">
-                    <i class="bi bi-play-circle display-4 text-primary"></i>
-                    <h6 class="mt-2">Videos</h6>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Popular Folders -->
-    {% if popular_folders %}
-    <section class="popular-folders mb-5">
-        <h3 class="mb-4">
-            <i class="bi bi-star-fill text-warning me-2"></i>Popular Folders
-        </h3>
-        <div class="row g-4">
-            {% for folder in popular_folders %}
-            <div class="col-lg-3 col-md-4 col-6">
-                <div class="card h-100 border-0 shadow-sm folder-card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-folder-fill text-warning fs-3 me-2"></i>
-                            <div>
-                                <h6 class="mb-0 text-truncate">{{ folder.name }}</h6>
-                                <small class="text-muted">by {{ folder.owner.username }}</small>
+            
+            <div class="col-lg-6 hero-visual" data-aos="fade-left" data-aos-delay="200">
+                <div class="hero-cards-wrapper">
+                    <!-- Floating Cards -->
+                    <div class="floating-card card-1" data-aos="fade-up" data-aos-delay="400">
+                        <div class="floating-card-icon pdf">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </div>
+                        <div class="floating-card-content">
+                            <span class="filename">Physics_Notes.pdf</span>
+                            <span class="filesize">2.4 MB</span>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-card card-2" data-aos="fade-up" data-aos-delay="500">
+                        <div class="floating-card-icon image">
+                            <i class="bi bi-file-earmark-image"></i>
+                        </div>
+                        <div class="floating-card-content">
+                            <span class="filename">Chemistry_Diagram.png</span>
+                            <span class="filesize">890 KB</span>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-card card-3" data-aos="fade-up" data-aos-delay="600">
+                        <div class="floating-card-icon video">
+                            <i class="bi bi-file-earmark-play"></i>
+                        </div>
+                        <div class="floating-card-content">
+                            <span class="filename">Maths_Tutorial.mp4</span>
+                            <span class="filesize">45 MB</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Card -->
+                    <div class="hero-stats-card" data-aos="zoom-in" data-aos-delay="700">
+                        <div class="stats-card-header">
+                            <i class="bi bi-graph-up-arrow text-success"></i>
+                            <span>Platform Stats</span>
+                        </div>
+                        <div class="stats-card-body">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ format_number(stats.total_files) }}</span>
+                                <span class="stat-label">Files</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ format_number(stats.total_downloads) }}</span>
+                                <span class="stat-label">Downloads</span>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-light text-dark">
-                                <i class="bi bi-file-earmark me-1"></i>{{ folder.files.count() }} files
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
+        <span>Scroll to explore</span>
+    </div>
+</section>
+
+<!-- Trusted By / Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid" data-aos="fade-up">
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper primary">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" data-count="{{ stats.total_users }}">0</span>
+                    <span class="stat-name">Active Users</span>
+                </div>
+            </div>
+            
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper success">
+                    <i class="bi bi-file-earmark-check"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" data-count="{{ stats.total_files }}">0</span>
+                    <span class="stat-name">Study Materials</span>
+                </div>
+            </div>
+            
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper warning">
+                    <i class="bi bi-folder-check"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" data-count="{{ stats.total_folders }}">0</span>
+                    <span class="stat-name">Collections</span>
+                </div>
+            </div>
+            
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper info">
+                    <i class="bi bi-cloud-download"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-value" data-count="{{ stats.total_downloads }}">0</span>
+                    <span class="stat-name">Downloads</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="bi bi-grid-3x3-gap me-1"></i>Categories
+            </span>
+            <h2 class="section-title">Browse by Category</h2>
+            <p class="section-subtitle">Find study materials organized by class and subject</p>
+        </div>
+        
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ url_for('category_view', slug=category.slug) }}" class="category-card-modern" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="category-icon-wrapper bg-{{ category.color }}-soft">
+                    <i class="{{ category.icon }} text-{{ category.color }}"></i>
+                </div>
+                <h3 class="category-name">{{ category.name }}</h3>
+                <p class="category-count">{{ category.get_folder_count() }} folders</p>
+                <div class="category-arrow">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Folders Section -->
+{% if featured_folders %}
+<section class="featured-section py-5 bg-light-gradient">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+            <div>
+                <span class="section-badge warning">
+                    <i class="bi bi-star-fill me-1"></i>Featured
+                </span>
+                <h2 class="section-title mb-0">Editor's Picks</h2>
+            </div>
+            <a href="{{ url_for('explore') }}" class="btn btn-outline-primary btn-sm d-none d-md-inline-flex">
+                View All <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for folder in featured_folders %}
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="folder-card-modern featured">
+                    <div class="folder-card-badge">
+                        <i class="bi bi-star-fill"></i> Featured
+                    </div>
+                    <div class="folder-card-header">
+                        <div class="folder-icon-wrapper">
+                            <i class="bi bi-folder-fill"></i>
+                        </div>
+                        <div class="folder-actions">
+                            <button class="btn-icon star-btn" data-type="folder" data-id="{{ folder.id }}" aria-label="Star folder">
+                                <i class="bi bi-star"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="folder-card-body">
+                        <h4 class="folder-title">{{ folder.name }}</h4>
+                        {% if folder.description %}
+                            <p class="folder-desc">{{ folder.description|truncate(60) }}</p>
+                        {% endif %}
+                        <div class="folder-meta">
+                            <span class="meta-item">
+                                <i class="bi bi-file-earmark"></i>
+                                {{ folder.get_total_files() }} files
                             </span>
-                            <span class="text-warning">
-                                <i class="bi bi-star-fill"></i> {{ folder.get_star_count() }}
+                            <span class="meta-item">
+                                <i class="bi bi-eye"></i>
+                                {{ format_number(folder.view_count) }}
                             </span>
                         </div>
                     </div>
-                    <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="stretched-link"></a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Recent Uploads -->
-    {% if recent_files %}
-    <section class="recent-uploads mb-5">
-        <h3 class="mb-4">
-            <i class="bi bi-clock-history text-primary me-2"></i>Recent Uploads
-        </h3>
-        <div class="row g-3">
-            {% for file in recent_files %}
-            <div class="col-lg-2 col-md-3 col-4">
-                <div class="card h-100 border-0 shadow-sm file-card">
-                    <div class="card-body text-center p-2">
-                        <i class="{{ file.get_icon() }} fs-1"></i>
-                        <p class="small mb-1 text-truncate" title="{{ file.filename }}">{{ file.filename }}</p>
-                        <small class="text-muted">{{ file.get_size_formatted() }}</small>
+                    <div class="folder-card-footer">
+                        <div class="folder-author">
+                            <img src="{{ url_for('static', filename='avatars/' + folder.owner.avatar) }}" 
+                                 alt="{{ folder.owner.username }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ folder.owner.username }}&background=667eea&color=fff'">
+                            <span>{{ folder.owner.username }}</span>
+                        </div>
+                        <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="btn btn-sm btn-primary">
+                            Open
+                        </a>
                     </div>
-                    <a href="{{ url_for('folder_view', folder_id=file.folder_id) }}" class="stretched-link"></a>
                 </div>
             </div>
             {% endfor %}
         </div>
-    </section>
-    {% endif %}
-</div>
+        
+        <div class="text-center mt-4 d-md-none">
+            <a href="{{ url_for('explore') }}" class="btn btn-outline-primary">
+                View All Featured <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Popular Folders Section -->
+<section class="popular-section py-5">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+            <div>
+                <span class="section-badge danger">
+                    <i class="bi bi-fire me-1"></i>Trending
+                </span>
+                <h2 class="section-title mb-0">Popular This Week</h2>
+            </div>
+            <a href="{{ url_for('explore') }}?sort=popular" class="btn btn-outline-primary btn-sm d-none d-md-inline-flex">
+                View All <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for folder in popular_folders %}
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="folder-card-modern">
+                    {% if loop.index <= 3 %}
+                        <div class="folder-card-rank rank-{{ loop.index }}">
+                            #{{ loop.index }}
+                        </div>
+                    {% endif %}
+                    <div class="folder-card-header">
+                        <div class="folder-icon-wrapper">
+                            <i class="bi bi-folder-fill"></i>
+                        </div>
+                        <div class="folder-actions">
+                            {% if current_user.is_authenticated %}
+                                <button class="btn-icon star-btn" data-type="folder" data-id="{{ folder.id }}" aria-label="Star folder">
+                                    <i class="bi bi-star"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="folder-card-body">
+                        <h4 class="folder-title">{{ folder.name }}</h4>
+                        {% if folder.description %}
+                            <p class="folder-desc">{{ folder.description|truncate(60) }}</p>
+                        {% endif %}
+                        <div class="folder-meta">
+                            <span class="meta-item">
+                                <i class="bi bi-file-earmark"></i>
+                                {{ folder.get_total_files() }} files
+                            </span>
+                            <span class="meta-item">
+                                <i class="bi bi-eye"></i>
+                                {{ format_number(folder.view_count) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="folder-card-footer">
+                        <div class="folder-author">
+                            <img src="{{ url_for('static', filename='avatars/' + folder.owner.avatar) }}" 
+                                 alt="{{ folder.owner.username }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ folder.owner.username }}&background=667eea&color=fff'">
+                            <span>{{ folder.owner.username }}</span>
+                        </div>
+                        <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="btn btn-sm btn-outline-primary">
+                            Open
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="empty-state-modern" data-aos="fade-up">
+                    <div class="empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+                    <h4>No Public Folders Yet</h4>
+                    <p>Be the first to share your study materials!</p>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('create_folder') }}" class="btn btn-primary">
+                            <i class="bi bi-folder-plus me-2"></i>Create Folder
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-primary">
+                            <i class="bi bi-person-plus me-2"></i>Get Started
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Recent Uploads Section -->
+<section class="recent-section py-5 bg-light-gradient">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
+            <div>
+                <span class="section-badge info">
+                    <i class="bi bi-clock-history me-1"></i>Latest
+                </span>
+                <h2 class="section-title mb-0">Recent Uploads</h2>
+            </div>
+        </div>
+        
+        <div class="files-grid">
+            {% for file in recent_files %}
+            <div class="file-card-modern" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="file-icon-wrapper {{ file.file_type }}">
+                    <i class="bi bi-file-earmark-{{ 'pdf' if file.file_type == 'pdf' else 'image' if file.file_type == 'image' else 'music' if file.file_type == 'audio' else 'play' if file.file_type == 'video' else 'text' }}"></i>
+                </div>
+                <div class="file-info">
+                    <a href="{{ url_for('file_view', file_id=file.id) }}" class="file-name">{{ file.filename|truncate(30) }}</a>
+                    <div class="file-meta">
+                        <span>{{ file.get_size_formatted() }}</span>
+                        <span class="separator">•</span>
+                        <span>{{ format_datetime(file.uploaded_at) }}</span>
+                    </div>
+                </div>
+                <div class="file-stats">
+                    <span class="stat"><i class="bi bi-download"></i> {{ file.download_count }}</span>
+                </div>
+                <div class="file-actions">
+                    <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn-icon" aria-label="Download">
+                        <i class="bi bi-download"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="empty-state-modern small">
+                    <i class="bi bi-file-earmark-x fs-1 text-muted"></i>
+                    <p class="mt-3 text-muted">No files uploaded yet</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Leaderboard Section -->
+{% if leaderboard %}
+<section class="leaderboard-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="section-header text-center mb-5" data-aos="fade-up">
+                    <span class="section-badge warning">
+                        <i class="bi bi-trophy-fill me-1"></i>Hall of Fame
+                    </span>
+                    <h2 class="section-title">Top Contributors</h2>
+                    <p class="section-subtitle">Our amazing community members sharing knowledge</p>
+                </div>
+                
+                <!-- Top 3 Podium -->
+                <div class="leaderboard-podium" data-aos="zoom-in">
+                    {% if leaderboard|length >= 2 %}
+                    <div class="podium-item second">
+                        <div class="podium-avatar-wrapper">
+                            <img src="{{ url_for('static', filename='avatars/' + leaderboard[1][0].avatar) }}" 
+                                 alt="{{ leaderboard[1][0].username }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ leaderboard[1][0].username }}&background=667eea&color=fff'">
+                            <span class="podium-rank">2</span>
+                        </div>
+                        <h5 class="podium-name">{{ leaderboard[1][0].username }}</h5>
+                        <p class="podium-stats">{{ format_number(leaderboard[1][2] or 0) }} downloads</p>
+                        <div class="podium-bar"></div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if leaderboard|length >= 1 %}
+                    <div class="podium-item first">
+                        <div class="podium-crown">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <div class="podium-avatar-wrapper">
+                            <img src="{{ url_for('static', filename='avatars/' + leaderboard[0][0].avatar) }}" 
+                                 alt="{{ leaderboard[0][0].username }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ leaderboard[0][0].username }}&background=667eea&color=fff'">
+                            <span class="podium-rank">1</span>
+                        </div>
+                        <h5 class="podium-name">{{ leaderboard[0][0].username }}</h5>
+                        <p class="podium-stats">{{ format_number(leaderboard[0][2] or 0) }} downloads</p>
+                        <div class="podium-bar"></div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if leaderboard|length >= 3 %}
+                    <div class="podium-item third">
+                        <div class="podium-avatar-wrapper">
+                            <img src="{{ url_for('static', filename='avatars/' + leaderboard[2][0].avatar) }}" 
+                                 alt="{{ leaderboard[2][0].username }}"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ leaderboard[2][0].username }}&background=667eea&color=fff'">
+                            <span class="podium-rank">3</span>
+                        </div>
+                        <h5 class="podium-name">{{ leaderboard[2][0].username }}</h5>
+                        <p class="podium-stats">{{ format_number(leaderboard[2][2] or 0) }} downloads</p>
+                        <div class="podium-bar"></div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Rest of Leaderboard -->
+                {% if leaderboard|length > 3 %}
+                <div class="leaderboard-list mt-4" data-aos="fade-up">
+                    {% for user, upload_count, total_downloads in leaderboard[3:] %}
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">{{ loop.index + 3 }}</div>
+                        <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" 
+                             alt="{{ user.username }}" class="leaderboard-avatar"
+                             onerror="this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=667eea&color=fff'">
+                        <div class="leaderboard-info">
+                            <a href="{{ url_for('public_profile', username=user.username) }}" class="leaderboard-name">{{ user.username }}</a>
+                            <span class="leaderboard-uploads">{{ upload_count }} uploads</span>
+                        </div>
+                        <div class="leaderboard-score">
+                            {{ format_number(total_downloads or 0) }}
+                            <small>downloads</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('leaderboard') }}" class="btn btn-outline-primary">
+                        View Full Leaderboard <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- WhatsApp CTA Section -->
+<section class="whatsapp-cta-section">
+    <div class="whatsapp-cta-bg">
+        <div class="whatsapp-pattern"></div>
+    </div>
+    <div class="container position-relative">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center" data-aos="zoom-in">
+                <div class="whatsapp-cta-content">
+                    <div class="whatsapp-icon-big">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <h2>Join Our WhatsApp Channel</h2>
+                    <p>Get instant updates about new study materials, exam tips, and exclusive resources!</p>
+                    <div class="whatsapp-features">
+                        <span><i class="bi bi-check-circle-fill"></i> Daily Updates</span>
+                        <span><i class="bi bi-check-circle-fill"></i> Exam Tips</span>
+                        <span><i class="bi bi-check-circle-fill"></i> Free Resources</span>
+                    </div>
+                    <a href="https://whatsapp.com/channel/0029Vajn1eIAzNc69HqQqX0Y" 
+                       class="btn btn-whatsapp-large" 
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <i class="bi bi-whatsapp me-2"></i>
+                        Join Now - It's Free!
+                    </a>
+                    <p class="whatsapp-members">
+                        <i class="bi bi-people-fill me-1"></i>
+                        Join 1000+ students already in the channel
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge success">
+                <i class="bi bi-lightning-charge me-1"></i>Simple
+            </span>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Get started in just 3 simple steps</p>
+        </div>
+        
+        <div class="steps-wrapper">
+            <div class="steps-line"></div>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <h4>Create Account</h4>
+                        <p>Sign up for free in seconds. No credit card required.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <i class="bi bi-cloud-upload"></i>
+                        </div>
+                        <h4>Upload & Organize</h4>
+                        <p>Upload your notes and organize them into folders.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <i class="bi bi-share"></i>
+                        </div>
+                        <h4>Share & Learn</h4>
+                        <p>Share with others and discover amazing resources.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('upload_files') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-cloud-upload me-2"></i>Start Uploading
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-rocket-takeoff me-2"></i>Get Started Now
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials / Features Section -->
+<section class="features-section py-5 bg-light-gradient">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge primary">
+                <i class="bi bi-stars me-1"></i>Features
+            </span>
+            <h2 class="section-title">Why Choose StudyVault?</h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>100% Free</h4>
+                    <p>No hidden fees, no premium plans. Everything is free for students.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h4>Fast & Reliable</h4>
+                    <p>Lightning fast uploads and downloads with 99.9% uptime.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lock"></i>
+                    </div>
+                    <h4>Privacy First</h4>
+                    <p>Control who sees your files. Make them public or keep them private.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h4>Mobile Friendly</h4>
+                    <p>Access your files from anywhere, on any device.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h4>Smart Search</h4>
+                    <p>Find exactly what you need with our powerful search engine.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h4>Track Progress</h4>
+                    <p>See how many people downloaded your study materials.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="final-cta-section py-5">
+    <div class="container">
+        <div class="final-cta-card" data-aos="zoom-in">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2>Ready to Start Learning?</h2>
+                    <p>Join thousands of students already sharing and discovering study materials on StudyVault.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('explore') }}" class="btn btn-light btn-lg">
+                            <i class="bi bi-compass me-2"></i>Explore Now
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+                            <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Counter Animation
+function animateCounters() {
+    const counters = document.querySelectorAll('[data-count]');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-count'));
+        const duration = 2000;
+        const step = target / (duration / 16);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                counter.textContent = formatNumber(target);
+                clearInterval(timer);
+            } else {
+                counter.textContent = formatNumber(Math.floor(current));
+            }
+        }, 16);
+    });
+}
+
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+// Trigger counter animation when section is visible
+const statsSection = document.querySelector('.stats-section');
+if (statsSection) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    observer.observe(statsSection);
+}
+</script>
 {% endblock %}

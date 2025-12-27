@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ file.filename }} - StudyVault{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('folder_view', folder_id=file.folder_id) }}">{{ file.folder.name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('file_view', file_id=file.id) }}">{{ file.filename }}</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Edit File
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Current File Info -->
+                    <div class="alert alert-light d-flex align-items-center mb-4">
+                        <i class="{{ file.get_icon() }} fs-1 me-3"></i>
+                        <div>
+                            <strong>{{ file.filename }}</strong>
+                            <br>
+                            <small class="text-muted">{{ file.get_size_formatted() }} • {{ file.file_type }}</small>
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-card-text me-1"></i>Description
+                            </label>
+                            {{ form.description(class="form-control", rows=3, placeholder="Add a description for this file...") }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">{{ form.description.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-tags me-1"></i>Tags
+                            </label>
+                            {{ form.tags(class="form-control", placeholder="physics, class12, notes (comma separated)") }}
+                            <small class="text-muted">Separate tags with commas</small>
+                            {% if form.tags.errors %}
+                                <div class="invalid-feedback d-block">{{ form.tags.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Move to Folder -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-folder me-1"></i>Folder
+                            </label>
+                            {{ form.folder_id(class="form-select") }}
+                        </div>
+
+                        <!-- Visibility -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                {{ form.is_public(class="form-check-input") }}
+                                <label class="form-check-label" for="is_public">
+                                    <i class="bi bi-globe me-1"></i>Make this file public
+                                </label>
+                            </div>
+                            <small class="text-muted">Public files can be viewed by anyone with the link</small>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 pt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Save Changes
+                            </button>
+                            <a href="{{ url_for('file_view', file_id=file.id) }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Once you delete a file, there is no going back.</p>
+                    <form action="{{ url_for('delete_file_route', file_id=file.id) }}" method="POST" 
+                          onsubmit="return confirm('Are you sure you want to delete this file? This action cannot be undone.')">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-1"></i>Delete File
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

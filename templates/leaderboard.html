@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Leaderboard - StudyVault{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h2><i class="bi bi-trophy text-warning me-2"></i>Top Contributors</h2>
+        <p class="text-muted">Users with most downloads on their uploads</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            {% for user, upload_count, total_downloads in users %}
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank {{ 'gold' if loop.index == 1 else 'silver' if loop.index == 2 else 'bronze' if loop.index == 3 else '' }}">
+                        {% if loop.index <= 3 %}
+                            <i class="bi bi-trophy-fill"></i>
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </div>
+                    <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" 
+                         alt="Avatar" class="rounded-circle me-3" 
+                         style="width: 50px; height: 50px; object-fit: cover;"
+                         onerror="this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=667eea&color=fff'">
+                    <div class="flex-grow-1">
+                        <a href="{{ url_for('public_profile', username=user.username) }}" class="fw-bold text-decoration-none">
+                            {{ user.username }}
+                        </a>
+                        <div class="small text-muted">
+                            {{ upload_count }} uploads
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold text-success">{{ format_number(total_downloads or 0) }}</div>
+                        <small class="text-muted">downloads</small>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-trophy text-muted" style="font-size: 4rem;"></i>
+                    <p class="mt-3 text-muted">No contributors yet</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

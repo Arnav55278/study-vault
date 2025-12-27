@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - StudyVault{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Category Header -->
+    <div class="card bg-gradient-primary text-white mb-4">
+        <div class="card-body py-4">
+            <div class="d-flex align-items-center">
+                <div class="category-icon-large bg-white bg-opacity-25 rounded-circle p-3 me-4">
+                    <i class="{{ category.icon }} fs-1"></i>
+                </div>
+                <div>
+                    <h1 class="mb-2">{{ category.name }}</h1>
+                    {% if category.description %}
+                        <p class="mb-0 opacity-90">{{ category.description }}</p>
+                    {% endif %}
+                    <small class="opacity-75">{{ folders.total }} folders available</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Sort By</label>
+                    <select name="sort" class="form-select" onchange="this.form.submit()">
+                        <option value="recent" {{ 'selected' if request.args.get('sort') == 'recent' else '' }}>Most Recent</option>
+                        <option value="popular" {{ 'selected' if request.args.get('sort') == 'popular' else '' }}>Most Popular</option>
+                        <option value="downloads" {{ 'selected' if request.args.get('sort') == 'downloads' else '' }}>Most Downloads</option>
+                        <option value="name" {{ 'selected' if request.args.get('sort') == 'name' else '' }}>Name (A-Z)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Search in {{ category.name }}</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search folders..." value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Folders Grid -->
+    {% if folders.items %}
+        <div class="row g-4">
+            {% for folder in folders.items %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 folder-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <i class="bi bi-folder-fill text-warning fs-1 me-3"></i>
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">
+                                    <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="text-decoration-none text-dark">
+                                        {{ folder.name }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted">by {{ folder.owner.username }}</small>
+                            </div>
+                        </div>
+                        {% if folder.description %}
+                            <p class="text-muted small">{{ folder.description|truncate(80) }}</p>
+                        {% endif %}
+                        <div class="d-flex gap-3 text-muted small">
+                            <span><i class="bi bi-file-earmark me-1"></i>{{ folder.get_total_files() }} files</span>
+                            <span><i class="bi bi-eye me-1"></i>{{ folder.view_count }}</span>
+                            <span><i class="bi bi-star me-1"></i>{{ folder.get_star_count() }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <a href="{{ url_for('folder_view', folder_id=folder.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-folder2-open me-1"></i>Open Folder
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if folders.has_prev or folders.has_next %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if folders.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ folders.prev_num }}&sort={{ request.args.get('sort', 'recent') }}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ folders.page }} of {{ folders.pages }}</span>
+                </li>
+                
+                {% if folders.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ folders.next_num }}&sort={{ request.args.get('sort', 'recent') }}">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-folder-x text-muted" style="font-size: 5rem;"></i>
+            <h4 class="mt-3 text-muted">No folders in this category</h4>
+            <p class="text-muted">Be the first to share study materials!</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('create_folder') }}?category={{ category.id }}" class="btn btn-primary">
+                    <i class="bi bi-folder-plus me-1"></i>Create Folder
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary">
+                    <i class="bi bi-person-plus me-1"></i>Get Started
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.folder-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.folder-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

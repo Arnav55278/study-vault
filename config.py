@@ -27,8 +27,8 @@ class Config:
     APP_NAME = "StudyVault"
     ADMIN_EMAIL = "admin@studyvault.com"
     
-    # WhatsApp Channel (APNA LINK DALO)
-    WHATSAPP_CHANNEL = "https://whatsapp.com/channel/YOUR_CHANNEL_LINK"
+    # WhatsApp Channel Link (UPDATED!)
+    WHATSAPP_CHANNEL = "https://whatsapp.com/channel/0029Vajn1eIAzNc69HqQqX0Y"
     
     # Categories
     CATEGORIES = [
