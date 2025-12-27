@@ -1,15 +1,16 @@
-from flask import Flask
-from app import app  # yeh tera original app.py se import kar raha hai
+from flask import Flask, request
+from werkzeug.wrappers import Response
 
-# Vercel ke liye handler (yeh important hai)
+# Tera original app import kar
+from app import app  # agar tera main file app.py hai
+
 def handler(event, context):
-    # Vercel event ko Flask ke request mein convert karta hai
-    from werkzeug.wrappers import Request
-    from werkzeug.serving import run_wsgi_app
+    # Vercel event ko Flask request mein convert
+    req = request.get_json() if request.is_json else request.form.to_dict()
+    # Simple handler: Flask app ko call kar
+    response = app(event, context)
+    return Response(response, status=200)
 
-    # Simple way: direct Flask app call
-    return app(event, context)
-
-# Local testing ke liye (ignore kar Vercel pe)
+# Local testing ke liye
 if __name__ == '__main__':
     app.run(debug=True)
